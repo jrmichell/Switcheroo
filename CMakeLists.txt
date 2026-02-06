@@ -7,11 +7,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCES
     src/switcheroo.cpp
+
+    src/converter.cpp
+    src/converter.hpp
 )
 add_library(jsoncons INTERFACE)
 target_include_directories(jsoncons INTERFACE external/jsoncons/include)
 
-add_executable(switcheroo src/switcheroo.cpp)
+add_executable(switcheroo
+               src/switcheroo.cpp
+               src/converter.cpp
+)
 
 target_link_libraries(switcheroo PRIVATE jsoncons)
 

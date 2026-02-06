@@ -1,11 +1,6 @@
-#include <fstream>
-#include <jsoncons/json.hpp>
-#include <jsoncons_ext/csv/csv.hpp>
 #include <print>
 
-#include "jsoncons_ext/csv/encode_csv.hpp"
-
-using jsoncons::json;
+#include "converter.hpp"
 
 int main(int argc, char** argv) {
     if (argc != 3) {
@@ -13,15 +8,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    std::ifstream input(argv[1]);
-    json j = json::parse(input);
-    input.close();
-    
-    std::ofstream output(argv[2]);
-    jsoncons::csv::encode_csv(j, output);
-    output.close();
-    
-    std::println("Converted.");
-    
+    std::string input_file_path = argv[1];
+    std::string output_file_path = argv[2];
+
+    Converter converter;
+    converter.convert(input_file_path, output_file_path);
+
     return 0;
 }
