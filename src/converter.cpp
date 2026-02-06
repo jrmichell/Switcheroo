@@ -5,6 +5,7 @@
 
 #include "converter.hpp"
 
+using namespace std;
 using jsoncons::json;
 
 bool Converter::convert(string input_file_path, string output_file_path) {

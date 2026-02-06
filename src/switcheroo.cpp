@@ -2,6 +2,8 @@
 
 #include "converter.hpp"
 
+using namespace std;
+
 int main(int argc, char** argv) {
     if (argc != 3) {
         println("Usage: {} <input_json_file> <output_csv_file>", argv[0]);
