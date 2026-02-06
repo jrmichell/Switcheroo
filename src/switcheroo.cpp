@@ -12,7 +12,9 @@ int main(int argc, char** argv) {
     std::string output_file_path = argv[2];
 
     Converter converter;
-    converter.convert(input_file_path, output_file_path);
+    if (!converter.convert(input_file_path, output_file_path)) {
+        return 1;
+    }
 
     return 0;
 }
