@@ -2,21 +2,16 @@
 
 #include "converter.hpp"
 
-using namespace std;
-
 int main(int argc, char** argv) {
-    if (argc != 3) {
-        println("Usage: {} <input_json_file> <output_csv_file>", argv[0]);
+    if (argc != 2) {
+        std::println("Usage: {} <input_file>", argv[0]);
         return 1;
     }
 
-    string input_file_path = argv[1];
-    string output_file_path = argv[2];
+    std::string input_file_path = argv[1];
 
     Converter converter;
-    if (!converter.convert(input_file_path, output_file_path)) {
-        return 1;
-    }
+    converter.convert(input_file_path);
 
     return 0;
 }
