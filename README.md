@@ -14,5 +14,5 @@ git clone https://github.com/danielaparker/jsoncons.git external/jsoncons
 
 ```bash
 cmake -B build && cmake --build build
-./build/switcheroo <input_json_file> <output_csv_file>
+./build/switcheroo <json or csv file path>
 ```
