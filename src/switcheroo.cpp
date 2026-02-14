@@ -41,7 +41,13 @@ void prompt_menu(Converter& converter) {
         std::println("\n[1] Convert");
         std::println("[2] Quit\n");
         std::print("Enter an option: ");
-        std::cin >> option;
+
+        if (!(std::cin >> option)) {
+            std::println("\nPlease enter a valid option.");
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
 
         FileType file_type = FileType::NONE;
         switch (option) {
@@ -50,6 +56,7 @@ void prompt_menu(Converter& converter) {
             if (file_type != FileType::NONE) {
                 break;
             }
+            break;
         case 2:
             std::println("\nGoodbye!");
             break;
