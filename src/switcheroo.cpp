@@ -6,7 +6,7 @@
 FileType convert_option(Converter& converter, std::string& file_path);
 void prompt_menu(Converter& converter);
 
-int main(int argc, char** argv) {
+int main(void) {
     Converter converter;
     prompt_menu(converter);
 
