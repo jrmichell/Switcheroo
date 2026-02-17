@@ -89,3 +89,52 @@ FileType Converter::read_file_ext(fs::path& file_path) {
 
     return FileType::NONE;
 }
+
+void Converter::csv_display_contents(fs::path& file_path) {
+    std::string line;
+    std::ifstream input_file(file_path);
+    if (!input_file) {
+        println("An error occurred while reading {}.", file_path.string());
+        return;
+    }
+
+    std::println("\n[{}]", file_path.string());
+    while (std::getline(input_file, line)) {
+        std::println("{}", line);
+    }
+    input_file.close();
+}
+
+bool Converter::csv_remove_duplicate_records() {
+    std::unordered_set<std::string> seen;
+    std::vector<std::string> unique_lines;
+    std::string line;
+    std::ifstream input_file(input_path);
+    if (!input_file) {
+        println("An error occurred while reading {}.", input_path.string());
+        return false;
+    }
+
+    int total_removed = 0;
+    while (std::getline(input_file, line)) {
+        if (seen.insert(line).second) {
+            unique_lines.push_back(line);
+        } else {
+            total_removed++;
+        }
+    }
+    input_file.close();
+
+    std::ofstream output_file(input_path);
+    for (const auto& line : unique_lines) {
+        output_file << line << "\n";
+    }
+
+    if (total_removed == 0) {
+        std::println("There were no duplicate records to remove.");
+        return false;
+    }
+    std::println("There were {} duplicate record(s) removed.", total_removed);
+
+    return true;
+}
