@@ -1,3 +1,5 @@
+#pragma once
+
 #include "converter.hpp"
 
 class Menu {
