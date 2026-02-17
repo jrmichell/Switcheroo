@@ -13,17 +13,17 @@ enum class FileType {
 
 class Converter {
     public:
-        void prompt_menu();
+        void convert();
+        FileType read_file_ext(fs::path& file_path);
 
-        fs::path get_file_path() { return file_path; }
-        void set_file_path(fs::path& file_path) { this->file_path = file_path; }
+        fs::path& get_input_file_path() { return input_path; }
+        fs::path& get_output_file_path() { return output_path; }
 
     private:
-        void convert();
         bool json_to_csv();
         bool csv_to_json();
-        FileType read_input_file_ext();
         FileType convert_option();
 
-        fs::path file_path;
+        fs::path input_path;
+        fs::path output_path;
 };

@@ -1,8 +1,9 @@
-#include "converter.hpp"
+#include "menu.hpp"
 
 int main(void) {
     Converter converter;
-    converter.prompt_menu();
+    Menu menu(converter);
+    menu.prompt_menu();
 
     return 0;
 }

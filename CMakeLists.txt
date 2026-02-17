@@ -10,6 +10,9 @@ set(SOURCES
 
     src/converter.cpp
     src/converter.hpp
+
+    src/menu.cpp
+    src/menu.hpp
 )
 add_library(jsoncons INTERFACE)
 target_include_directories(jsoncons INTERFACE external/jsoncons/include)
@@ -17,6 +20,7 @@ target_include_directories(jsoncons INTERFACE external/jsoncons/include)
 add_executable(switcheroo
                src/switcheroo.cpp
                src/converter.cpp
+               src/menu.cpp
 )
 
 target_link_libraries(switcheroo PRIVATE jsoncons)
