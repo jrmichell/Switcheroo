@@ -1,9 +1,11 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 enum class FileType {
-    NONE,
+    NONE = 0,
 
     CSV,
     JSON
@@ -11,10 +13,17 @@ enum class FileType {
 
 class Converter {
     public:
-        void convert(std::string& input_file_path);
-        FileType read_input_file_ext(std::string& input_file_path);
+        void prompt_menu();
+
+        fs::path get_file_path() { return file_path; }
+        void set_file_path(fs::path& file_path) { this->file_path = file_path; }
 
     private:
-        bool json_to_csv(std::string& input_file_path);
-        bool csv_to_json(std::string& input_file_path);
+        void convert();
+        bool json_to_csv();
+        bool csv_to_json();
+        FileType read_input_file_ext();
+        FileType convert_option();
+
+        fs::path file_path;
 };
