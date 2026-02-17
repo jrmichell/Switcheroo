@@ -21,7 +21,7 @@ void Converter::convert() {
         json_to_csv();
         break;
     case FileType::NONE:
-        std::println("An error occurred determining the file type of {}", static_cast<std::string>(file_path));
+        std::println("An error occurred determining the file type of {}", file_path.string());
         break;
     }
 }
@@ -29,21 +29,22 @@ void Converter::convert() {
 bool Converter::json_to_csv() {
     std::ifstream input(file_path);
     if (!input) {
-        println("An error occurred while reading {}.", static_cast<std::string>(file_path));
+        std::println("An error occurred while reading {}.", file_path.string());
         return false;
     }
     json j = json::parse(input);
 
-    std::string csv_output_file_path = file_path.replace_extension(".csv");
+    fs::path output_path = file_path;
+    output_path.replace_extension(".csv");
 
-    std::ofstream output(csv_output_file_path);
+    std::ofstream output(output_path);
     if (!output) {
-        println("An error occurred while opening {}.", csv_output_file_path);
+        println("An error occurred while opening {}.", output_path.string());
         return false;
     }
     csv::encode_csv(j, output);
 
-    println("Successfully converted {} to {}.", static_cast<std::string>(file_path), csv_output_file_path);
+    println("Successfully converted {} to {}.", file_path.string(), output_path.string());
 
     return true;
 }
@@ -51,16 +52,16 @@ bool Converter::json_to_csv() {
 bool Converter::csv_to_json() {
     std::ifstream input(file_path);
     if (!input) {
-        println("An error occurred while reading {}.", static_cast<std::string>(file_path));
+        println("An error occurred while reading {}.", file_path.string());
         return false;
     }
 
-    fs::path input_path(file_path);
-    std::string json_output_file_path = input_path.replace_extension(".json");
+    fs::path output_path = file_path;
+    output_path.replace_extension(".json");
 
-    std::ofstream output(json_output_file_path);
+    std::ofstream output(output_path);
     if (!output) {
-        println("An error occurred while opening {}.", json_output_file_path);
+        println("An error occurred while opening {}.", output_path.string());
         return false;
     }
 
@@ -70,7 +71,7 @@ bool Converter::csv_to_json() {
     json result = csv::decode_csv<json>(input, options);
     result.dump(output, jsoncons::indenting::indent);
 
-    println("Successfully converted {} to {}.", static_cast<std::string>(file_path), json_output_file_path);
+    println("Successfully converted {} to {}.", file_path.string(), output_path.string());
 
     return true;
 }
