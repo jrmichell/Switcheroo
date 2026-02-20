@@ -57,7 +57,7 @@ bool Converter::csv_to_json() {
     }
 
     output_path = input_path;
-    output_path.replace_extension(".csv");
+    output_path.replace_extension(".json");
 
     std::ofstream output(output_path);
     if (!output) {
