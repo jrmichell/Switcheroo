@@ -5,11 +5,11 @@
 class Menu {
     public:
         Menu(Converter& converter) 
-            : m_converter(converter) {}
+            : converter(converter) {}
 
         FileType read_input_file_type();
         void prompt_menu();
 
     private:
-        Converter m_converter;
+        Converter converter;
 };
