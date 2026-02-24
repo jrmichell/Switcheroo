@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <jsoncons/json.hpp>
 
 namespace fs = std::filesystem;
 
@@ -14,10 +15,12 @@ enum class FileType {
 class Converter {
     public:
         void convert();
-        FileType read_file_ext(fs::path& file_path);
+        FileType read_file_ext(const fs::path& file_path);
 
         bool csv_remove_duplicate_records();
-        void csv_display_contents(fs::path& file_path);
+        void csv_display_contents(const fs::path& file_path);
+
+        bool json_flatten();
 
         fs::path& get_input_file_path() { return input_path; }
         fs::path& get_output_file_path() { return output_path; }
@@ -26,6 +29,7 @@ class Converter {
         bool json_to_csv();
         bool csv_to_json();
         FileType convert_option();
+        void flatten_helper(const jsoncons::json& j, const std::string& prefix, jsoncons::json& result);
 
         fs::path input_path;
         fs::path output_path;

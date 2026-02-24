@@ -1,5 +1,4 @@
 #include <fstream>
-#include <jsoncons/json.hpp>
 #include <jsoncons_ext/csv/csv.hpp>
 #include <print>
 
@@ -76,7 +75,7 @@ bool Converter::csv_to_json() {
     return true;
 }
 
-FileType Converter::read_file_ext(fs::path& file_path) {
+FileType Converter::read_file_ext(const fs::path& file_path) {
     std::string extension = file_path.extension().string();
 
     if (extension == ".csv")  {
@@ -90,7 +89,7 @@ FileType Converter::read_file_ext(fs::path& file_path) {
     return FileType::NONE;
 }
 
-void Converter::csv_display_contents(fs::path& file_path) {
+void Converter::csv_display_contents(const fs::path& file_path) {
     std::string line;
     std::ifstream input_file(file_path);
     if (!input_file) {
@@ -136,5 +135,43 @@ bool Converter::csv_remove_duplicate_records() {
     }
     std::println("There were {} duplicate record(s) removed.", total_removed);
 
+    return true;
+}
+
+void Converter::flatten_helper(const json& j, const std::string& prefix, json& result) {
+    if (j.is_object()) {
+      for (const auto& member : j.object_range()) {
+          std::string key = prefix.empty() ? std::string(member.key())
+                                           : prefix + "." + std::string(member.key());
+          flatten_helper(member.value(), key, result);
+      }
+    } else if (j.is_array()) {
+      for (std::size_t i = 0; i < j.size(); ++i) {
+          flatten_helper(j[i], prefix + "[" + std::to_string(i) + "]", result);
+      }
+    } else {
+      result[prefix] = j;
+    }
+}
+
+bool Converter::json_flatten() {
+    std::ifstream input(input_path);
+    if (!input) {
+        std::println("An error occurred while reading {}.", input_path.string());
+        return false;
+    }
+    json j = json::parse(input);
+
+    json result;
+    flatten_helper(j, "", result);
+
+    std::ofstream output(input_path);
+    if (!output) {
+        std::println("An error occurred while opening {}.", input_path.string());
+        return false;
+    }
+    result.dump(output, jsoncons::indenting::indent);
+
+    std::println("Successfully flattened {}.", input_path.string());
     return true;
 }
