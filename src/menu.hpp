@@ -11,5 +11,6 @@ class Menu {
         void prompt_menu();
 
     private:
+        void prompt_data_validation_menu();
         Converter converter;
 };
