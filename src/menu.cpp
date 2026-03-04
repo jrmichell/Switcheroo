@@ -2,8 +2,9 @@
 #include <print>
 
 #include "menu.hpp"
+#include "validator.hpp"
 
-void Menu::prompt_data_validation_menu() {
+void Menu::prompt_data_validation_menu(Validator& validator) {
     int option = 0;
 
     do {
@@ -14,7 +15,7 @@ void Menu::prompt_data_validation_menu() {
         std::print("Enter an option: ");
 
         if (!(std::cin >> option)) {
-            std::println("\nPlease enter a valid option.");
+            std::println("\nPlease enter a valid option.\n");
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -26,7 +27,7 @@ void Menu::prompt_data_validation_menu() {
         case 1:
             file_type = read_input_file_type();
             if (file_type != FileType::CSV) {
-                std::println("You can only remove duplicates from a CSV.");
+                std::println("You can only remove duplicates from a CSV.\n");
                 continue;
             }
             converter.csv_remove_duplicate_records();
@@ -34,15 +35,15 @@ void Menu::prompt_data_validation_menu() {
         case 2:
             file_type = read_input_file_type();
             if (file_type != FileType::JSON) {
-                std::println("You can only flatten JSON data.");
+                std::println("You can only flatten JSON data.\n");
                 continue;
             }
-            converter.json_flatten();
+            validator.json_flatten(converter.get_input_file_path());
             break;
         case 3:
             file_type = read_input_file_type();
             if (file_type != FileType::CSV) {
-                std::println("You can only trim whitespace from a CSV.");
+                std::println("You can only trim whitespace from a CSV.\n");
                 continue;
             }
             converter.csv_trim_whitespace();
@@ -50,7 +51,7 @@ void Menu::prompt_data_validation_menu() {
         case 4:
             break;
         default:
-            std::println("\nPlease enter a valid option.");
+            std::println("Please enter a valid option.\n");
         }
     } while (option != 4);
 }
@@ -67,6 +68,7 @@ FileType Menu::read_input_file_type() {
 
 void Menu::prompt_menu() {
     int option = 0;
+    Validator validator = converter.get_validator();
 
     std::println("--- Switcheroo ---\n");
     do {
@@ -107,13 +109,13 @@ void Menu::prompt_menu() {
             converter.csv_display_contents(converter.get_input_file_path());
             break;
         case 3:
-            prompt_data_validation_menu();
+            prompt_data_validation_menu(validator);
             break;
         case 4:
             std::println("Goodbye!");
             break;
         default:
-            std::println("\nPlease enter a valid option.");
+            std::println("Please enter a valid option.\n");
         }
     } while (option != 4);
 }

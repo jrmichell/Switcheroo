@@ -22,7 +22,7 @@ void Converter::convert() {
         json_to_csv();
         break;
     case FileType::NONE:
-        std::println("An error occurred determining the file type of {}", input_path.string());
+        std::println("An error occurred determining the file type of {}\n", input_path.string());
         break;
     }
 }
@@ -30,7 +30,7 @@ void Converter::convert() {
 bool Converter::json_to_csv() {
     std::ifstream input(input_path);
     if (!input) {
-        std::println("An error occurred while reading {}.", input_path.string());
+        std::println("An error occurred while reading {}.\n", input_path.string());
         return false;
     }
     json j = json::parse(input);
@@ -40,12 +40,12 @@ bool Converter::json_to_csv() {
 
     std::ofstream output(output_path);
     if (!output) {
-        std::println("An error occurred while opening {}.", output_path.string());
+        std::println("An error occurred while opening {}.\n", output_path.string());
         return false;
     }
     csv::encode_csv(j, output);
 
-    std::println("Successfully converted {} to {}.", input_path.string(), output_path.string());
+    std::println("Successfully converted {} to {}.\n", input_path.string(), output_path.string());
 
     return true;
 }
@@ -86,7 +86,7 @@ bool Converter::csv_to_json() {
 
     std::ifstream input(input_path);
     if (!input) {
-        std::println("An error occurred while reading {}.", input_path.string());
+        std::println("An error occurred while reading {}.\n", input_path.string());
         return false;
     }
 
@@ -95,7 +95,7 @@ bool Converter::csv_to_json() {
 
     std::ofstream output(output_path);
     if (!output) {
-        std::println("An error occurred while opening {}.", output_path.string());
+        std::println("An error occurred while opening {}.\n", output_path.string());
         return false;
     }
 
@@ -105,7 +105,7 @@ bool Converter::csv_to_json() {
     json result = csv::decode_csv<json>(input, options);
     result.dump(output, jsoncons::indenting::indent);
 
-    std::println("Successfully converted {} to {}.", input_path.string(), output_path.string());
+    std::println("Successfully converted {} to {}.\n", input_path.string(), output_path.string());
 
     return true;
 }
@@ -128,7 +128,7 @@ void Converter::csv_display_contents(const fs::path& file_path) {
     std::string line;
     std::ifstream input_file(file_path);
     if (!input_file) {
-        std::println("An error occurred while reading {}.", file_path.string());
+        std::println("An error occurred while reading {}.\n", file_path.string());
         return;
     }
 
@@ -148,7 +148,7 @@ bool Converter::csv_remove_duplicate_records() {
     std::string line;
     std::ifstream input_file(input_path);
     if (!input_file) {
-        std::println("An error occurred while reading {}.", input_path.string());
+        std::println("An error occurred while reading {}.\n", input_path.string());
         return false;
     }
 
@@ -168,10 +168,10 @@ bool Converter::csv_remove_duplicate_records() {
     }
 
     if (total_removed == 0) {
-        std::println("There were no duplicate records to remove.");
+        std::println("There were no duplicate records to remove.\n");
         return false;
     }
-    std::println("There were {} duplicate record(s) removed.", total_removed);
+    std::println("There were {} duplicate record(s) removed.\n", total_removed);
 
     return true;
 }
@@ -187,7 +187,7 @@ bool Converter::csv_trim_whitespace() {
 
     std::ifstream input_file(input_path);
     if (!input_file) {
-        std::println("An error occurred while reading {}.", input_path.string());
+        std::println("An error occurred while reading {}.\n", input_path.string());
         return false;
     }
 
@@ -222,44 +222,6 @@ bool Converter::csv_trim_whitespace() {
         output_file << l << "\n";
     }
 
-    std::println("Successfully trimmed whitespace in {}.", input_path.string());
-    return true;
-}
-
-void Converter::flatten_helper(const json& j, const std::string& prefix, json& result) {
-    if (j.is_object()) {
-      for (const auto& member : j.object_range()) {
-          std::string key = prefix.empty() ? std::string(member.key())
-                                           : prefix + "." + std::string(member.key());
-          flatten_helper(member.value(), key, result);
-      }
-    } else if (j.is_array()) {
-      for (std::size_t i = 0; i < j.size(); ++i) {
-          flatten_helper(j[i], prefix + "[" + std::to_string(i) + "]", result);
-      }
-    } else {
-      result[prefix] = j;
-    }
-}
-
-bool Converter::json_flatten() {
-    std::ifstream input(input_path);
-    if (!input) {
-        std::println("An error occurred while reading {}.", input_path.string());
-        return false;
-    }
-    json j = json::parse(input);
-
-    json result;
-    flatten_helper(j, "", result);
-
-    std::ofstream output(input_path);
-    if (!output) {
-        std::println("An error occurred while opening {}.", input_path.string());
-        return false;
-    }
-    result.dump(output, jsoncons::indenting::indent);
-
-    std::println("Successfully flattened {}.", input_path.string());
+    std::println("Successfully trimmed whitespace in {}.\n", input_path.string());
     return true;
 }

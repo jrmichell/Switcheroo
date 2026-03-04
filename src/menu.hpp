@@ -1,6 +1,7 @@
 #pragma once
 
 #include "converter.hpp"
+#include "validator.hpp"
 
 class Menu {
     public:
@@ -11,6 +12,6 @@ class Menu {
         void prompt_menu();
 
     private:
-        void prompt_data_validation_menu();
+        void prompt_data_validation_menu(Validator& validator);
         Converter converter;
 };
