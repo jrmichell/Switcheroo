@@ -4,7 +4,7 @@
 int main(void) {
     Validator validator;
     Converter converter(validator);
-    Menu menu(converter);
+    Menu      menu(converter);
 
     menu.prompt_menu();
 
