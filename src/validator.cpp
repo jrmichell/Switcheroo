@@ -30,7 +30,7 @@ bool Validator::json_flatten(fs::path& input_path) {
     // able to convert with it being flattened.
     std::ifstream input(input_path);
     if (!input) {
-        std::println("An error occurred while reading {}.\n", input_path.string());
+        log(std::format("An error occurred while reading {}.", input_path.string()));
         return false;
     }
     json j = json::parse(input);
@@ -40,11 +40,18 @@ bool Validator::json_flatten(fs::path& input_path) {
 
     std::ofstream output(input_path);
     if (!output) {
-        std::println("An error occurred while opening {}.\n", input_path.string());
+        log(std::format("An error occurred while opening {}.", input_path.string()));
         return false;
     }
     result.dump(output, jsoncons::indenting::indent);
 
-    std::println("Successfully flattened {}.\n", input_path.string());
+    log(std::format("Successfully flattened {}.", input_path.string()));
     return true;
+}
+
+void Validator::log(const std::string& message) {
+    if (logger_)
+        logger_(message);
+    else
+        std::println("{}", message);
 }

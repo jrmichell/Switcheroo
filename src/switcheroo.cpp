@@ -1,12 +1,20 @@
-#include "menu.hpp"
-#include "validator.hpp"
+#include <QApplication>
+#include <QFont>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QStyleHints>
 
-int main(void) {
-    Validator validator;
-    Converter converter(validator);
-    Menu      menu(converter);
+#include "main_window.hpp"
 
-    menu.prompt_menu();
+int main(int argc, char** argv) {
+    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    QApplication app(argc, argv);
+    MainWindow   window;
+
+    app.setStyle("Fusion");
+
+    window.show();
+    app.exec();
 
     return 0;
 }

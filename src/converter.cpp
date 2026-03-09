@@ -3,6 +3,7 @@
 #include <sstream>
 #include <jsoncons_ext/csv/csv.hpp>
 #include <print>
+#include <format>
 
 #include "converter.hpp"
 
@@ -12,34 +13,34 @@ namespace csv = jsoncons::csv;
 namespace fs  = std::filesystem;
 
 void Converter::convert() {
-    FileType input_file_type = read_file_ext(input_path);
+    FileType input_file_type = read_file_ext(input_path_);
 
     switch (input_file_type) {
         case FileType::CSV: csv_to_json(); break;
         case FileType::JSON: json_to_csv(); break;
-        case FileType::NONE: std::println("An error occurred determining the file type of {}\n", input_path.string()); break;
+        case FileType::NONE: log(std::format("An error occurred determining the file type of {}\n", input_path_.string())); break;
     }
 }
 
 bool Converter::json_to_csv() {
-    std::ifstream input(input_path);
+    std::ifstream input(input_path_);
     if (!input) {
-        std::println("An error occurred while reading {}.\n", input_path.string());
+        log(std::format("An error occurred while reading {}.\n", input_path_.string()));
         return false;
     }
     json j = json::parse(input);
 
-    output_path = input_path;
-    output_path.replace_extension(".csv");
+    output_path_ = input_path_;
+    output_path_.replace_extension(".csv");
 
-    std::ofstream output(output_path);
+    std::ofstream output(output_path_);
     if (!output) {
-        std::println("An error occurred while opening {}.\n", output_path.string());
+        log(std::format("An error occurred while opening {}.\n", input_path_.string()));
         return false;
     }
     csv::encode_csv(j, output);
 
-    std::println("Successfully converted {} to {}.\n", input_path.string(), output_path.string());
+    log(std::format("Successfully converted {} to {}.\n", input_path_.string(), output_path_.string()));
 
     return true;
 }
@@ -51,7 +52,7 @@ bool Converter::csv_validate_header(const fs::path& file_path) {
 
     std::string first_line;
     if (!std::getline(input, first_line) || first_line.empty()) {
-        std::println("CSV file {} must have a header row.\n", file_path.string());
+        log(std::format("CSV file {} must have a header row.\n", file_path.string()));
         return false;
     }
 
@@ -66,7 +67,7 @@ bool Converter::csv_validate_header(const fs::path& file_path) {
         bool is_numeric = !field.empty() && std::all_of(field.begin(), field.end(), [](char c) { return std::isdigit(c) || c == '.' || c == '-'; });
 
         if (is_numeric) {
-            std::println("CSV file {} must have a header row.\n", file_path.string());
+            log(std::format("CSV file {} must have a header row.\n", file_path.string()));
             return false;
         }
     }
@@ -75,21 +76,21 @@ bool Converter::csv_validate_header(const fs::path& file_path) {
 }
 
 bool Converter::csv_to_json() {
-    if (!csv_validate_header(input_path))
+    if (!csv_validate_header(input_path_))
         return false;
 
-    std::ifstream input(input_path);
+    std::ifstream input(input_path_);
     if (!input) {
-        std::println("An error occurred while reading {}.\n", input_path.string());
+        log(std::format("An error occurred while reading {}.\n", input_path_.string()));
         return false;
     }
 
-    output_path = input_path;
-    output_path.replace_extension(".json");
+    output_path_ = input_path_;
+    output_path_.replace_extension(".json");
 
-    std::ofstream output(output_path);
+    std::ofstream output(output_path_);
     if (!output) {
-        std::println("An error occurred while opening {}.\n", output_path.string());
+        log(std::format("An error occurred while opening {}.\n", input_path_.string()));
         return false;
     }
 
@@ -99,7 +100,7 @@ bool Converter::csv_to_json() {
     json result = csv::decode_csv<json>(input, options);
     result.dump(output, jsoncons::indenting::indent);
 
-    std::println("Successfully converted {} to {}.\n", input_path.string(), output_path.string());
+    log(std::format("Successfully converted {} to {}.\n", input_path_.string(), output_path_.string()));
 
     return true;
 }
@@ -118,32 +119,31 @@ FileType Converter::read_file_ext(const fs::path& file_path) {
     return FileType::NONE;
 }
 
-void Converter::csv_display_contents(const fs::path& file_path) {
+void Converter::display_file_contents(const fs::path& file_path) {
     std::string   line;
     std::ifstream input_file(file_path);
     if (!input_file) {
-        std::println("An error occurred while reading {}.\n", file_path.string());
+        log(std::format("An error occurred while reading {}.\n", file_path.string()));
         return;
     }
 
-    std::println("\n[{}]", file_path.string());
     while (std::getline(input_file, line)) {
-        std::println("{}", line);
+        log(line);
     }
-    std::println();
+    log("");
     input_file.close();
 }
 
 bool Converter::csv_remove_duplicate_records() {
-    if (!csv_validate_header(input_path))
+    if (!csv_validate_header(input_path_))
         return false;
 
     std::unordered_set<std::string> seen;
     std::vector<std::string>        unique_lines;
     std::string                     line;
-    std::ifstream                   input_file(input_path);
+    std::ifstream                   input_file(input_path_);
     if (!input_file) {
-        std::println("An error occurred while reading {}.\n", input_path.string());
+        log(std::format("An error occurred while reading {}.\n", input_path_.string()));
         return false;
     }
 
@@ -157,16 +157,16 @@ bool Converter::csv_remove_duplicate_records() {
     }
     input_file.close();
 
-    std::ofstream output_file(input_path);
+    std::ofstream output_file(input_path_);
     for (const auto& line : unique_lines) {
         output_file << line << "\n";
     }
 
     if (total_removed == 0) {
-        std::println("There were no duplicate records to remove.\n");
+        log(std::format("There were no duplicate records to remove.\n"));
         return false;
     }
-    std::println("There were {} duplicate record(s) removed.\n", total_removed);
+    log(std::format("There were {} duplicate record(s) removed.\n", total_removed));
 
     return true;
 }
@@ -178,12 +178,12 @@ static std::string trim(const std::string& s) {
 }
 
 bool Converter::csv_trim_whitespace() {
-    if (!csv_validate_header(input_path))
+    if (!csv_validate_header(input_path_))
         return false;
 
-    std::ifstream input_file(input_path);
+    std::ifstream input_file(input_path_);
     if (!input_file) {
-        std::println("An error occurred while reading {}.\n", input_path.string());
+        log(std::format("An error occurred while reading {}.\n", input_path_.string()));
         return false;
     }
 
@@ -214,11 +214,18 @@ bool Converter::csv_trim_whitespace() {
     }
     input_file.close();
 
-    std::ofstream output_file(input_path);
+    std::ofstream output_file(input_path_);
     for (const auto& l : result_lines) {
         output_file << l << "\n";
     }
 
-    std::println("Successfully trimmed whitespace in {}.\n", input_path.string());
+    log(std::format("Successfully trimmed whitespace in {}.\n", input_path_.string()));
     return true;
+}
+
+void Converter::log(const std::string& message) {
+    if (logger_)
+        logger_(message);
+    else
+        std::println("{}", message);
 }
