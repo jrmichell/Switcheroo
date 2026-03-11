@@ -1,3 +1,6 @@
+> [!WARNING]
+> This is an experimental project. It it **not** intended for real, or critical use.
+
 # Switcheroo
 
 A small GUI file converter for converting between CSV and JSON with data validation utilities.
@@ -21,6 +24,7 @@ A small GUI file converter for converting between CSV and JSON with data validat
 ## Setup
 
 Clone jsoncons into the external folder:
+
 ```bash
 mkdir external
 git clone https://github.com/danielaparker/jsoncons.git external/jsoncons
@@ -34,6 +38,7 @@ cmake -B build && cmake --build build
 ```
 
 On macOS, install dependencies via Homebrew first:
+
 ```bash
 brew install cmake qt6
 ```
@@ -41,7 +46,7 @@ brew install cmake qt6
 ## Platform Support
 
 | Platform | Supported |
-|----------|-----------|
+| -------- | --------- |
 | Linux    | Yes       |
 | macOS    | Yes       |
 | Windows  | No        |
