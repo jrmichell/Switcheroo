@@ -10,6 +10,9 @@ namespace fs = std::filesystem;
 
 class Validator {
   public:
+    Validator()  = default;
+    ~Validator() = default;
+
     void set_logger(std::function<void(const std::string&)> logger) {
         logger_ = std::move(logger);
     }

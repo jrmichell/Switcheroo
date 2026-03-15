@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow {
 
   public:
     explicit MainWindow(QWidget* parent = nullptr);
+    ~MainWindow() = default;
 
   private slots:
     void on_convert_clicked();

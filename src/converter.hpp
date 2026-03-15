@@ -18,6 +18,7 @@ enum class FileType {
 class Converter {
   public:
     Converter(Validator& validator) : validator_(validator) {}
+    ~Converter() = default;
 
     void     convert();
     FileType read_file_ext(const fs::path& file_path);
