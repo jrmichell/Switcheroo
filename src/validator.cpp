@@ -50,8 +50,5 @@ bool Validator::json_flatten(fs::path& input_path) {
 }
 
 void Validator::log(const std::string& message) {
-    if (logger_)
-        logger_(message);
-    else
-        std::println("{}", message);
+    logger_(message);
 }

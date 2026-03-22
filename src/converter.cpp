@@ -224,8 +224,5 @@ bool Converter::csv_trim_whitespace() {
 }
 
 void Converter::log(const std::string& message) {
-    if (logger_)
-        logger_(message);
-    else
-        std::println("{}", message);
+    logger_(message);
 }
