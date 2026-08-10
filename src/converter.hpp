@@ -1,27 +1,24 @@
 #pragma once
 
 #include <filesystem>
-
-#include <jsoncons/json.hpp>
-
-#include "validator.hpp"
+#include <functional>
+#include <string>
 
 namespace fs = std::filesystem;
 
 enum class FileType {
-    NONE = 0,
-
-    CSV,
-    JSON
+    None,
+    Csv,
+    Json
 };
 
 class Converter {
   public:
-    Converter(Validator& validator) : validator_(validator) {}
+    Converter()  = default;
     ~Converter() = default;
 
-    void     convert();
-    FileType read_file_ext(const fs::path& file_path);
+    bool     convert();
+    FileType read_file_ext(const fs::path& file_path) const;
     bool     csv_remove_duplicate_records();
     bool     csv_trim_whitespace();
     void     display_file_contents(const fs::path& file_path);
@@ -30,26 +27,25 @@ class Converter {
         logger_ = std::move(logger);
     }
 
-    fs::path& get_input_file_path() {
-        return input_path_;
-    }
-    fs::path& get_output_file_path() {
-        return output_path_;
+    void set_input_file_path(fs::path path) {
+        input_path_ = std::move(path);
     }
 
-    Validator& get_validator() {
-        return validator_;
+    const fs::path& get_input_file_path() const {
+        return input_path_;
+    }
+
+    const fs::path& get_output_file_path() const {
+        return output_path_;
     }
 
   private:
     bool                                    json_to_csv();
     bool                                    csv_to_json();
-    FileType                                convert_option();
     bool                                    csv_validate_header(const fs::path& file_path);
-    void                                    log(const std::string& message);
+    void                                    log(const std::string& message) const;
 
     fs::path                                input_path_;
     fs::path                                output_path_;
-    Validator                               validator_;
     std::function<void(const std::string&)> logger_;
 };

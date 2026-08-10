@@ -17,6 +17,7 @@ target_include_directories(jsoncons INTERFACE external/jsoncons/include)
 add_executable(switcheroo
     src/switcheroo.cpp
     src/main_window.cpp
+    src/theme_manager.cpp
     src/converter.cpp
     src/validator.cpp
 )
@@ -26,6 +27,14 @@ set_target_properties(switcheroo PROPERTIES
 )
 
 target_link_libraries(switcheroo PRIVATE jsoncons Qt6::Widgets)
+
+if (APPLE)
+    enable_language(OBJCXX)
+    target_sources(switcheroo PRIVATE src/macos_platform.mm)
+    find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
+    find_library(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK UniformTypeIdentifiers REQUIRED)
+    target_link_libraries(switcheroo PRIVATE ${APPKIT_FRAMEWORK} ${UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK})
+endif()
 
 if (MSVC)
     target_compile_options(switcheroo PRIVATE /W4)

@@ -1,25 +1,29 @@
+#include "converter.hpp"
+
+#include "validator.hpp"
+
 #include <algorithm>
+#include <cctype>
+#include <format>
 #include <fstream>
 #include <sstream>
-#include <jsoncons_ext/csv/csv.hpp>
-#include <print>
-#include <format>
+#include <unordered_set>
+#include <vector>
 
-#include "converter.hpp"
+#include <jsoncons_ext/csv/csv.hpp>
 
 using jsoncons::json;
 
 namespace csv = jsoncons::csv;
 namespace fs  = std::filesystem;
 
-void Converter::convert() {
-    FileType input_file_type = read_file_ext(input_path_);
-
-    switch (input_file_type) {
-        case FileType::CSV: csv_to_json(); break;
-        case FileType::JSON: json_to_csv(); break;
-        case FileType::NONE: log(std::format("An error occurred determining the file type of {}\n", input_path_.string())); break;
+bool Converter::convert() {
+    switch (read_file_ext(input_path_)) {
+        case FileType::Csv: return csv_to_json();
+        case FileType::Json: return json_to_csv();
+        case FileType::None: log(std::format("Could not determine the file type of {}.\n", input_path_.string())); return false;
     }
+    return false;
 }
 
 bool Converter::json_to_csv() {
@@ -28,7 +32,8 @@ bool Converter::json_to_csv() {
         log(std::format("An error occurred while reading {}.\n", input_path_.string()));
         return false;
     }
-    json j = json::parse(input);
+    const json document = json::parse(input);
+    const json records  = Validator::prepare_for_csv(document);
 
     output_path_ = input_path_;
     output_path_.replace_extension(".csv");
@@ -38,7 +43,7 @@ bool Converter::json_to_csv() {
         log(std::format("An error occurred while opening {}.\n", input_path_.string()));
         return false;
     }
-    csv::encode_csv(j, output);
+    csv::encode_csv(records, output);
 
     log(std::format("Successfully converted {} to {}.\n", input_path_.string(), output_path_.string()));
 
@@ -105,33 +110,38 @@ bool Converter::csv_to_json() {
     return true;
 }
 
-FileType Converter::read_file_ext(const fs::path& file_path) {
+FileType Converter::read_file_ext(const fs::path& file_path) const {
     std::string extension = file_path.extension().string();
+    std::ranges::transform(extension, extension.begin(), [](unsigned char c) { return std::tolower(c); });
 
-    if (extension == ".csv") {
-        return FileType::CSV;
-    }
-
-    if (extension == ".json") {
-        return FileType::JSON;
-    }
-
-    return FileType::NONE;
+    if (extension == ".csv")
+        return FileType::Csv;
+    if (extension == ".json")
+        return FileType::Json;
+    return FileType::None;
 }
 
 void Converter::display_file_contents(const fs::path& file_path) {
-    std::string   line;
     std::ifstream input_file(file_path);
     if (!input_file) {
         log(std::format("An error occurred while reading {}.\n", file_path.string()));
         return;
     }
 
-    while (std::getline(input_file, line)) {
-        log(line);
+    if (read_file_ext(file_path) == FileType::Json) {
+        try {
+            const json         document = json::parse(input_file);
+            std::ostringstream formatted;
+            document.dump(formatted, jsoncons::indenting::indent);
+            log(formatted.str());
+        } catch (const std::exception& error) { log(std::format("Could not preview {}: {}\n", file_path.string(), error.what())); }
+        return;
     }
+
+    std::string line;
+    while (std::getline(input_file, line))
+        log(line);
     log("");
-    input_file.close();
 }
 
 bool Converter::csv_remove_duplicate_records() {
@@ -223,6 +233,7 @@ bool Converter::csv_trim_whitespace() {
     return true;
 }
 
-void Converter::log(const std::string& message) {
-    logger_(message);
+void Converter::log(const std::string& message) const {
+    if (logger_)
+        logger_(message);
 }

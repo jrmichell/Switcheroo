@@ -1,19 +1,19 @@
-#include <QApplication>
-#include <QFont>
-#include <QGuiApplication>
-#include <QScreen>
-#include <QStyleHints>
-
 #include "main_window.hpp"
+#include "theme_manager.hpp"
+
+#include <QApplication>
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
-    MainWindow   window;
-
+    QApplication::setOrganizationName("Switcheroo");
+    QApplication::setApplicationName("Switcheroo");
     app.setStyle("Fusion");
 
-    window.show();
-    app.exec();
+    const AppTheme theme = ThemeManager::load_theme();
+    ThemeManager::apply_theme(app, theme);
 
-    return 0;
+    MainWindow window;
+    window.show();
+
+    return app.exec();
 }
