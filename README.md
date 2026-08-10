@@ -5,7 +5,7 @@
 
 Switcheroo is a small desktop application for converting between CSV and JSON and performing common data-cleanup operations.
 
-<img src="assets/switcheroo.jpg" width="1000" alt="Switcheroo application window">
+<img src="assets/switcheroo.png" width="1000" alt="Switcheroo application window">
 
 ## Features
 
@@ -89,8 +89,8 @@ Converted files are written beside the selected input file using the correspondi
 
 ## Platform Support
 
-| Platform | Supported | Notes |
-| -------- | --------- | ----- |
-| Linux | Yes | Uses the Qt file picker and standard window chrome |
-| macOS | Yes | Uses native Finder-style file selection and title-bar integration |
-| Windows | No | Not currently tested or supported |
+| Platform | Supported | Notes                                                             |
+| -------- | --------- | ----------------------------------------------------------------- |
+| Linux    | Yes       | Uses the Qt file picker and standard window chrome                |
+| macOS    | Yes       | Uses native Finder-style file selection and title-bar integration |
+| Windows  | No        | Not currently tested or supported                                 |
