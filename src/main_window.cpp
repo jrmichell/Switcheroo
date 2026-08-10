@@ -59,7 +59,7 @@ void MainWindow::build_ui() {
     auto* root_layout = new QVBoxLayout(root);
 #ifdef Q_OS_MACOS
     // The content extends beneath the transparent native title bar.
-    root_layout->setContentsMargins(28, 28, 28, 24);
+    root_layout->setContentsMargins(28, 24, 28, 24);
 #else
     root_layout->setContentsMargins(28, 22, 28, 24);
 #endif
