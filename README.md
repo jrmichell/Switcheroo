@@ -51,7 +51,7 @@ Install a C++23 compiler, CMake 4.2+, and the Qt 6 Widgets development package u
 Clone the repository and initialize the header-only `jsoncons` dependency:
 
 ```bash
-git clone <repository-url> Switcheroo
+git clone git@github.com:jrmichell/Switcheroo.git
 cd Switcheroo
 mkdir -p external
 git clone https://github.com/danielaparker/jsoncons.git external/jsoncons
